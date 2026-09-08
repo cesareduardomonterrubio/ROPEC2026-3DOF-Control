@@ -125,6 +125,7 @@ $$
   $$R = \text{diag}(15,\ 2,\ 2)$$
  
 * Switching surface gain matrix ($K_{13} \in \mathbb{R}^{3 \times 6}$, corresponding to central rule center $q_2 = \pi, q_3 = \pi$):
+
 $$
 K_{13} = \begin{bmatrix}
 1.2910 & -2.3505 \times 10^{-4} & -1.4084 \times 10^{-4} & 0.3614 & -3.0173 \times 10^{-5} & 8.9783 \times 10^{-5} \\\\
