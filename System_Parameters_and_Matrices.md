@@ -133,6 +133,8 @@ K_{13} = \begin{bmatrix}
 2.1126 \times 10^{-4} & 6.8925 & 9.5428 & 5.2448 \times 10^{-4} & 1.7332 & 2.5722
 \end{bmatrix}
 $$
+  
+  
   with $K_p = K_{13}[:, 0:3]$ and $K_d = K_{13}[:, 3:6]$.
 * Continuous/Discrete gains:
   $$K_{STA1} = \text{diag}(100,\ 100,\ 100), \quad K_{STA2} = \text{diag}(50,\ 50,\ 50)$$
