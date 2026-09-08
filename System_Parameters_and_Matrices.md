@@ -125,13 +125,13 @@ $$
   $$R = \text{diag}(15,\ 2,\ 2)$$
  
 * Switching surface gain matrix ($K_{13} \in \mathbb{R}^{3 \times 6}$, corresponding to central rule center $q_2 = \pi, q_3 = \pi$):
-  $$
-  K_{13} = \begin{bmatrix}
-  1.2910 & -2.351 \times 10^{-4} & -1.408 \times 10^{-4} & 0.3614 & -3.017 \times 10^{-5} & 8.978 \times 10^{-5} \\\\
-  1.439 \times 10^{-4} & 20.7325 & 2.3364 & 1.523 \times 10^{-4} & 2.8883 & 0.1331 \\\\
-  2.113 \times 10^{-4} & 6.8925 & 9.5428 & 5.245 \times 10^{-4} & 1.7332 & 2.5722
-  \end{bmatrix}
-  $$
+$$
+K_{13} = \begin{bmatrix}
+1.2910 & -2.3505 \times 10^{-4} & -1.4084 \times 10^{-4} & 0.3614 & -3.0173 \times 10^{-5} & 8.9783 \times 10^{-5} \\\\
+1.4390 \times 10^{-4} & 20.7325 & 2.3364 & 1.5230 \times 10^{-4} & 2.8883 & 0.1331 \\\\
+2.1126 \times 10^{-4} & 6.8925 & 9.5428 & 5.2448 \times 10^{-4} & 1.7332 & 2.5722
+\end{bmatrix}
+$$
   with $K_p = K_{13}[:, 0:3]$ and $K_d = K_{13}[:, 3:6]$.
 * Continuous/Discrete gains:
   $$K_{STA1} = \text{diag}(100,\ 100,\ 100), \quad K_{STA2} = \text{diag}(50,\ 50,\ 50)$$
