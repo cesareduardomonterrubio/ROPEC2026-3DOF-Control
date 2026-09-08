@@ -96,3 +96,63 @@ $$
   $$\Lambda^{-1} = \text{diag}\left(\frac{K_2}{R_2},\ \frac{K_1}{R_1},\ \frac{K_2}{R_2}\right) \approx \text{diag}(0.04128,\ 0.09771,\ 0.04128)\text{ N}\cdot\text{m/V}$$
 * **Torque-to-Voltage Scaling Matrix ($\Lambda$):**
   $$\Lambda = \text{diag}\left(\frac{R_2}{K_2},\ \frac{R_1}{K_1},\ \frac{R_2}{K_2}\right) \approx \text{diag}(24.2240,\ 10.2342,\ 24.2240)\text{ V/(N}\cdot\text{m)}$$
+
+
+---
+
+## 3. Takagi-Sugeno Model Specifications
+
+* **Premise Variables:** Joint angles $q_2$ and $q_3$.
+* **Rule Partitioning:** 5 triangular/trapezoidal membership functions per joint ($5 \times 5 = 25$ operating rules) distributed over $[0, 2\pi]$ rad.
+  $$\text{wide} = \frac{2\pi}{5} \approx 1.2566\text{ rad}$$
+  $$\text{centers} = [0.6283,\ 1.8850,\ 3.1416,\ 4.3982,\ 5.6549]\text{ rad}$$
+* **Membership Functions ($\mu_i(q)$):** Outer centers use trapezoidal saturation; inner centers use standard triangular functions with base width $2 \cdot \text{wide}$.
+
+---
+
+## 4. Controller and Observer Configurations
+
+### A. Integral PDC Tuning (LQR Weighting)
+* State penalty matrix for the augmented 9-state formulation ($e_q, e_v, e_I$):
+  $$Q = \text{diag}(25,\ 50,\ 40,\ 5,\ 15,\ 15,\ 50,\ 100,\ 100)$$
+* Control effort penalty matrix:
+  $$R = \text{diag}(15,\ 2,\ 2)$$
+
+### B. Super-Twisting Algorithm (STA)
+* State penalty matrix:
+  $$Q = \text{diag}(25,\ 50,\ 40,\ 5,\ 15,\ 15)$$
+* Control effort penalty matrix:
+  $$R = \text{diag}(15,\ 2,\ 2)$$
+ 
+* Switching surface gain matrix ($K_{13} \in \mathbb{R}^{3 \times 6}$, corresponding to central rule center $q_2 = \pi, q_3 = \pi$):
+  $$
+  K_{13} = \begin{bmatrix}
+  1.2910 & -2.351 \times 10^{-4} & -1.408 \times 10^{-4} & 0.3614 & -3.017 \times 10^{-5} & 8.978 \times 10^{-5} \\\\
+  1.439 \times 10^{-4} & 20.7325 & 2.3364 & 1.523 \times 10^{-4} & 2.8883 & 0.1331 \\\\
+  2.113 \times 10^{-4} & 6.8925 & 9.5428 & 5.245 \times 10^{-4} & 1.7332 & 2.5722
+  \end{bmatrix}
+  $$
+  with $K_p = K_{13}[:, 0:3]$ and $K_d = K_{13}[:, 3:6]$.
+* Continuous/Discrete gains:
+  $$K_{STA1} = \text{diag}(100,\ 100,\ 100), \quad K_{STA2} = \text{diag}(50,\ 50,\ 50)$$
+* Smoothing factor: $\rho = 50$
+
+### C. State Observer (Luenberger-SMO)
+* Continuous dual LQR covariances (Kalman steady-state synthesis):
+  $$Q_w = \text{diag}(10^{-3},\ 10^{-3},\ 10^{-3},\ 10,\ 30,\ 30), \quad R_v = \text{diag}(10^{-4},\ 10^{-5},\ 10^{-4})$$
+* Sliding Mode injection matrix:
+  $$L_{sm} = \text{diag}(0,\ 0,\ 0,\ 5,\ 15,\ 15)$$
+* Injection smoothing: $\rho_{obs} = 15.0$
+* Observation sampling: $T_s = 5\text{ ms}$ ($200\text{ Hz}$)
+
+---
+
+## 5. Simulation Conditions and Trajectory Setup
+
+* **Initial States:**
+  $$q_0 = \left[0,\ \frac{\pi}{2},\ \frac{3\pi}{2}\right]^T\text{ rad}, \quad \dot{q}_0 = [0,\ 0,\ 0]^T\text{ rad/s}$$
+* **Encoder Quantization:** Realistic optical encoders with resolutions:
+  $$\text{PPR} = [1980,\ 4400,\ 1980]\text{ pulses/rev}$$
+* **Reference Trajectory (Fifth-Order Polynomial):** Duration $t_f = 6.0\text{ s}$ to destination $q_f = [\pi,\ \pi,\ \pi]^T\text{ rad}$:
+  $$q_{ref}(\tau) = q_0 + (q_f - q_0)(10\tau^3 - 15\tau^4 + 6\tau^5), \quad \tau = \frac{t}{t_f} \in [0, 1]$$
+  Velocity and acceleration references follow analytical first and second time derivatives, with zero boundary jerk.
